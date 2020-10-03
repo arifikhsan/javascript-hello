@@ -32,3 +32,77 @@ const edges = {
   n: { i: 2, j: 4, m: 8 },
   o: { m: 3, l: 5, k: 2 },
 };
+
+const graph = { ...edges };
+
+let shortestDistanceNode = (distances, visited) => {
+  let shortest = null;
+  for (const node in distances) {
+    let currentIsShortest =
+      shortest === null || distances[node] < distances[shortest];
+    if (currentIsShortest && !visited.includes(node)) {
+      shortest = node;
+    }
+  }
+  return shortest;
+};
+
+findShortestPath = (graph, startNode, endNode) => {
+  let distances = {};
+  distances[endNode] = "Infinity";
+  distances = Object.assign(distances, graph[startNode]);
+
+  let parents = { endNode: null };
+
+  for (const child in graph[startNode]) {
+    parents[child] = startNode;
+  }
+
+  let visited = [];
+  // console.log(distances);
+  let node = shortestDistanceNode(distances, visited);
+  // console.log(node)
+
+  while (node) {
+    let distance = distances[node];
+    let children = graph[node];
+
+    for (let child in children) {
+      if (String(child) === String(startNode)) {
+        continue;
+      } else {
+        let newDistance = distance + children[child];
+        if (!distances[child] || distances[child] > newDistance) {
+          distances[child] = newDistance;
+          parents[child] = node;
+        }
+      }
+    }
+
+    visited.push(node)
+    node = shortestDistanceNode(distances, visited)
+  }
+
+  let shortestPath = [endNode]
+  let parent = parents[endNode]
+  while (parent) {
+    shortestPath.push(parent)
+    parent = parents[parent]
+  }
+
+  shortestPath.reverse()
+
+  let results = {
+    distance: distances[endNode],
+    path: shortestPath
+  }
+
+  return results
+};
+
+const a = findShortestPath(graph, "a", "i");
+const b = findShortestPath(graph, "a", "n");
+const c = findShortestPath(graph, "a", "o");
+console.log(a)
+console.log(b)
+console.log(c)
