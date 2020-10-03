@@ -33,11 +33,11 @@ const edges = {
   o: { m: 3, l: 5, k: 2 },
 };
 
-const graph = { ...edges };
+const startGraph = { ...edges };
 
 let shortestDistanceNode = (distances, visited) => {
   let shortest = null;
-  for (const node in distances) {
+  for (let node in distances) {
     let currentIsShortest =
       shortest === null || distances[node] < distances[shortest];
     if (currentIsShortest && !visited.includes(node)) {
@@ -49,7 +49,7 @@ let shortestDistanceNode = (distances, visited) => {
 
 findShortestPath = (graph, startNode, endNode) => {
   let distances = {};
-  distances[endNode] = "Infinity";
+  distances[endNode] = Infinity;
   distances = Object.assign(distances, graph[startNode]);
 
   let parents = { endNode: null };
@@ -59,9 +59,7 @@ findShortestPath = (graph, startNode, endNode) => {
   }
 
   let visited = [];
-  // console.log(distances);
   let node = shortestDistanceNode(distances, visited);
-  // console.log(node)
 
   while (node) {
     let distance = distances[node];
@@ -79,30 +77,35 @@ findShortestPath = (graph, startNode, endNode) => {
       }
     }
 
-    visited.push(node)
-    node = shortestDistanceNode(distances, visited)
+    visited.push(node);
+    node = shortestDistanceNode(distances, visited);
   }
 
-  let shortestPath = [endNode]
-  let parent = parents[endNode]
+  let shortestPath = [endNode];
+  let parent = parents[endNode];
+
   while (parent) {
-    shortestPath.push(parent)
-    parent = parents[parent]
+    shortestPath.push(parent);
+    parent = parents[parent];
   }
 
-  shortestPath.reverse()
+  shortestPath.reverse();
+
+  let distanceNodes = 0;
+  shortestPath.forEach((path) => {
+    distanceNodes += nodes[path];
+  });
 
   let results = {
-    distance: distances[endNode],
-    path: shortestPath
-  }
+    distanceEdges: distances[endNode],
+    totalDistance: distanceNodes + distances[endNode],
+    path: shortestPath,
+  };
 
-  return results
+  return results;
 };
 
-const a = findShortestPath(graph, "a", "i");
-const b = findShortestPath(graph, "a", "n");
-const c = findShortestPath(graph, "a", "o");
-console.log(a)
-console.log(b)
-console.log(c)
+const start = findShortestPath(startGraph, "a", "i");
+// const end = findShortestPath(startGraph, "i", "a");
+console.log(start);
+// console.log(end)
