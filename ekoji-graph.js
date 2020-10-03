@@ -39,7 +39,7 @@ let shortestDistanceNode = (distances, visited) => {
   let shortest = null;
   for (let node in distances) {
     let currentIsShortest =
-      shortest === null || distances[node] < distances[shortest];
+      shortest === null || distances[node] < distances[shortest] + nodes[node];
     if (currentIsShortest && !visited.includes(node)) {
       shortest = node;
     }
@@ -61,6 +61,8 @@ findShortestPath = (graph, startNode, endNode) => {
   let visited = [];
   let node = shortestDistanceNode(distances, visited);
 
+  const increment = [];
+
   while (node) {
     let distance = distances[node];
     let children = graph[node];
@@ -70,7 +72,9 @@ findShortestPath = (graph, startNode, endNode) => {
         continue;
       } else {
         let newDistance = distance + children[child];
-        if (!distances[child] || distances[child] > newDistance) {
+        let newDistanceWithNode = distance + children[child] + nodes[child];
+
+        if (!distances[child] || distances[child] > newDistanceWithNode) {
           distances[child] = newDistance;
           parents[child] = node;
         }
@@ -96,8 +100,23 @@ findShortestPath = (graph, startNode, endNode) => {
     distanceNodes += nodes[path];
   });
 
+  for (let i = 0; i < shortestPath.length; i++) {
+    increment.push({ type: "node", value: nodes[shortestPath[i]] });
+    const edge = edges[shortestPath[i]][shortestPath[i + 1]];
+
+    if (typeof edge === "number") {
+      increment.push({ type: "edge", value: edge });
+    }
+  }
+
+  let incrementCount = 0;
+  increment.map((e) => (incrementCount += e.value));
+
   let results = {
-    // distanceEdges: distances[endNode],
+    distanceEdges: distances[endNode],
+    distanceNodes,
+    increment,
+    incrementCount,
     totalDistance: distanceNodes + distances[endNode],
     path: shortestPath,
   };
@@ -105,17 +124,17 @@ findShortestPath = (graph, startNode, endNode) => {
   return results;
 };
 
-const start = findShortestPath(startGraph, "a", "i");
-console.log(start);
+const start = findShortestPath(startGraph, "a", "j");
+console.log("start: ", start);
 
 const endGraph = { ...edges };
 
-start.path.pop()
-start.path.shift()
+start.path.pop();
+start.path.shift();
 
-start.path.forEach(usedNode => {
-  delete endGraph[usedNode]
-})
-const end = findShortestPath(endGraph, "i", "a");
+start.path.forEach((usedNode) => {
+  delete endGraph[usedNode];
+});
+const end = findShortestPath(endGraph, "j", "a");
 
-console.log(end)
+console.log(end);
