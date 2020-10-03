@@ -124,7 +124,7 @@ findShortestPath = (graph, startNode, endNode) => {
   return results;
 };
 
-const start = findShortestPath(startGraph, "a", "j");
+const start = findShortestPath(startGraph, "a", "n");
 console.log("start: ", start);
 
 const endGraph = { ...edges };
@@ -135,6 +135,6 @@ start.path.shift();
 start.path.forEach((usedNode) => {
   delete endGraph[usedNode];
 });
-const end = findShortestPath(endGraph, "j", "a");
+const end = findShortestPath(endGraph, "n", "a");
 
 console.log(end);
