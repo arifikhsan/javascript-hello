@@ -97,7 +97,7 @@ findShortestPath = (graph, startNode, endNode) => {
   });
 
   let results = {
-    distanceEdges: distances[endNode],
+    // distanceEdges: distances[endNode],
     totalDistance: distanceNodes + distances[endNode],
     path: shortestPath,
   };
@@ -106,6 +106,16 @@ findShortestPath = (graph, startNode, endNode) => {
 };
 
 const start = findShortestPath(startGraph, "a", "i");
-// const end = findShortestPath(startGraph, "i", "a");
 console.log(start);
-// console.log(end)
+
+const endGraph = { ...edges };
+
+start.path.pop()
+start.path.shift()
+
+start.path.forEach(usedNode => {
+  delete endGraph[usedNode]
+})
+const end = findShortestPath(endGraph, "i", "a");
+
+console.log(end)
